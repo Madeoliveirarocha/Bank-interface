@@ -2,6 +2,7 @@ package br.univali.cc.prog3.banco.visao;
 
 import br.univali.cc.prog3.banco.dominio.Banco;
 import br.univali.cc.prog3.banco.dominio.ContaCorrente;
+import br.univali.cc.prog3.banco.dominio.SaqueException;
 
 import javax.swing.JOptionPane;
 
@@ -25,34 +26,53 @@ public class CaixaEletronicoGUI {
     }
 
     public void menu() {
-        char opcao;
-        do {
-            String[] opcoes = {
-                "1 - Criar conta simples",
-                "2 - Criar conta especial",
-                "3 - Depositar",
-                "4 - Sacar",
-                "5 - Transferir",
-                "6 - Extrato",
-                "S - Sair"
-            };
-            String valorSelecionado = this.lerValor("Selecione uma opção",opcoes);
-            if (valorSelecionado == null) {
-                opcao = 'S';
-            } else {
-                opcao = valorSelecionado.toUpperCase().charAt(0);
-            }
-            
+    char opcao;
+    do {
+        String[] opcoes = {
+            "1 - Criar conta simples",
+            "2 - Criar conta especial",
+            "3 - Depositar",
+            "4 - Sacar",
+            "5 - Transferir",
+            "6 - Extrato",
+            "S - Sair"
+        };
+        String valorSelecionado = this.lerValor("Selecione uma opção", opcoes);
+        if (valorSelecionado == null) {
+            opcao = 'S';
+        } else {
+            opcao = valorSelecionado.toUpperCase().charAt(0);
+        }
+
+        try {
             switch (opcao) {
-                case '1': criarContaSimples();break;
-                case '2': criarContaEspecial();break;
-                case '3': depositar();break;
-                case '4': sacar();break;
-                case '5': transferir();break;
-                case '6': extrato();break;
+                case '1':
+                    criarContaSimples();
+                    break;
+                case '2':
+                    criarContaEspecial();
+                    break;
+                case '3':
+                    depositar();
+                    break;
+                case '4':
+                    sacar();
+                    break;
+                case '5':
+                    transferir();
+                    break;
+                case '6':
+                    extrato();
+                    break;
             }
-        } while (opcao != 'S');
-    }
+        } catch (SaqueException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+        catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    } while (opcao != 'S');
+}
 
     private void criarContaSimples() {
         double saldoInicial = Double.parseDouble(lerValor("Informe o saldo inicial"));
@@ -73,7 +93,7 @@ public class CaixaEletronicoGUI {
         this.banco.depositar(numero, valor);
     }
     
-    private void sacar() {
+    private void sacar() throws SaqueException {
         try {
             int numero = Integer.parseInt(lerValor("Informe o numero da conta"));
             double valor = Double.parseDouble(lerValor("Informe o valor para saque"));
@@ -83,13 +103,13 @@ public class CaixaEletronicoGUI {
                 if (contaCorrente.getSaldo() >= valor) {
                     this.banco.sacar(numero, valor);
                 } else {
-                    JOptionPane.showMessageDialog(null, "Saldo insuficiente.");
+                    throw new SaqueException("Saldo insuficiente");
                 }
             } else {
-                JOptionPane.showMessageDialog(null, "Conta não encontrada.");
+                throw new SaqueException("Conta não encontrada");
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Valor inválido. Informe um número válido.");
+            throw new SaqueException("Valor inválido. Informe um número válido");
         }
     }
     
