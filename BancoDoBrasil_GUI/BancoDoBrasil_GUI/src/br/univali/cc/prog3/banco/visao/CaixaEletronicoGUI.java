@@ -71,6 +71,9 @@ public class CaixaEletronicoGUI {
         catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
+        catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
     } while (opcao != 'S');
 }
 
