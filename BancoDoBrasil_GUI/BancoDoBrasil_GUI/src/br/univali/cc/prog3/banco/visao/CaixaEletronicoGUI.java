@@ -61,10 +61,10 @@ public class CaixaEletronicoGUI {
     }
     
    private void criarContaEspecial() {
-    double saldoInicial = Double.parseDouble(lerValor("Informe o saldo inicial"));
-    int numeroConta = Integer.parseInt(lerValor("Informe o número da conta"));
-    double limite = Double.parseDouble(lerValor("Informe o limite da conta"));
-    this.banco.criarContaEspecial(saldoInicial, numeroConta, limite);
+        double saldoInicial = Double.parseDouble(lerValor("Informe o saldo inicial"));
+        int numeroConta = Integer.parseInt(lerValor("Informe o número da conta"));
+        double limite = Double.parseDouble(lerValor("Informe o limite da conta"));
+        this.banco.criarContaEspecial(saldoInicial, numeroConta, limite);
     }
     
     private void depositar() {
@@ -94,21 +94,28 @@ public class CaixaEletronicoGUI {
     }
     
    private void transferir() {
-    int numeroOrigem = Integer.parseInt(lerValor("Informe o número da conta de origem"));
-    int numeroDestino = Integer.parseInt(lerValor("Informe o número da conta de destino"));
-    double valor = Double.parseDouble(lerValor("Informe o valor para transferência"));
+    try {
+        int numeroOrigem = Integer.parseInt(lerValor("Informe o número da conta de origem"));
+        int numeroDestino = Integer.parseInt(lerValor("Informe o número da conta de destino"));
+        double valor = Double.parseDouble(lerValor("Informe o valor para transferência"));
 
-    ContaCorrente contaOrigem = this.banco.localizarConta(numeroOrigem);
-    ContaCorrente contaDestino = this.banco.localizarConta(numeroDestino);
+        ContaCorrente contaOrigem = this.banco.localizarConta(numeroOrigem);
+        ContaCorrente contaDestino = this.banco.localizarConta(numeroDestino);
 
-    if (contaOrigem == null) {
-        JOptionPane.showMessageDialog(null, "Conta de origem não encontrada.");
-       } else if (contaDestino == null) {
-        JOptionPane.showMessageDialog(null, "Conta de destino não encontrada.");
-       } else {
+        if (contaOrigem == null) {
+            throw new IllegalArgumentException("Conta de origem não encontrada.");
+        }
+        if (contaDestino == null) {
+            throw new IllegalArgumentException("Conta de destino não encontrada.");
+        }
+
         this.banco.transferir(numeroOrigem, numeroDestino, valor);
-       }
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(null, "Valor inválido. Informe um número válido.");
+    } catch (IllegalArgumentException e) {
+        JOptionPane.showMessageDialog(null, e.getMessage());
     }
+}
 
     private void extrato(){
         int numero = Integer.parseInt(lerValor("Informe o numero da conta"));
